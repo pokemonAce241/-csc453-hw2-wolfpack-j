@@ -7,28 +7,33 @@ def signal_handler(sig, frame):
 	GPIO.cleanup()
 	sys.exit(0)
 
-signal.signal(signal.SIGINT, signal_handler)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(26,GPIO.OUT)
 
-while (True) :
-	GPIO.output(26,True)
-	time.sleep(0.01)
-	GPIO.output(26,False)
-	time.sleep(0.01)
-
-
-message = # Byte From tcp connection
-
-id = 0;
-message_header = []
-
-for c in messageToSend:
-	if ( c == 0 ):
-		
-	else:
-		
+def main():
+	global id
+	signal.signal(signal.SIGINT, signal_handler)
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(26,GPIO.OUT)
+	id = 0
+	
+	# get a byte and send it
+	while(True):
+		sendByte('c');
 
 
-def intTobits(n):
-	return [1 if digit=='1' else 0 for digit in bin(n)[2:]]
+def sendByte(m):
+	i = ord(m) # Get the integer value of the byte
+	messageBin = "{0:8b}".format(i) # returns the string representation for the binary of the byte held by message
+	
+	idBin = "{0:8b}".format(id) # returns the string representation for the binary of the byte held by id
+
+	messageToSend = idBin + messageBin
+
+	for c in messageToSend:
+		if ( c == '1' ):
+			GPIO.output(26,True)
+			time.sleep(0.01)
+		else:
+			GPIO.output(26,False)
+			time.sleep(0.01)
+
+	id++
