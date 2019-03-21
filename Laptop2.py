@@ -43,15 +43,13 @@ def loop():
                     spec = int(specification,2)
                 
 #This is a 1 bit output type that informs the program weither to print the output or write it to a file.                
-                    result_type = spec&type_mask
-                    result_type = bin(result_type)
+                    result_type = spec&type_mask                   
                     result_type = result_type>>7
 
 #This is a 1 bit that describes weither this message is the end of a file. It is important for when the output a file since this
 #tells the program that this is the end of the file so that the program can properly close the current file and open up a new
 #file in case the user wants to continue sending output to a file.
                     end_file = spec&file_end_mask
-                    end_file = bin(end_file)
                     end_file = end_file<<1
                     end_file = end_file>>7
                 
@@ -59,12 +57,9 @@ def loop():
 #properly extract the payload to send to output without risk of leaving any data out.
                     message_size = spec&message_size_mask
 
-                    message_size = int(message_size,2)
-                    result_type = int(result_type, 2)
-                    end_flie = int(end_file,2)
 #Taking the message size, this loop goes through the payload and either prints the payload to the console window 
 #or write the payload to a file depending on the output type.
-                    for x in message_size:
+                    for x in range(message_size):
                         payload = Data.read()
                         if result_type == 0:
                              Data.print(payload)   
