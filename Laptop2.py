@@ -78,7 +78,6 @@ def connect():
         
 # Closes the send_socket
 def clean_up():
-    if (send_socket):
         send_socket.close()  
 
        
