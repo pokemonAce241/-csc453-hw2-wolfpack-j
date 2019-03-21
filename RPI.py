@@ -9,7 +9,7 @@ import select
 
 # the size of the messages to receive from Laptop1 (this also serves as the
 # size of file messages that we will send through the LED)
-CHUNK_SIZE = 32
+CHUNK_SIZE = 64
 
 # a blank string means 'localhost' for sockets
 LOCALHOST = ''
@@ -102,7 +102,9 @@ def send_message(m):
     messageBin = ''
     for char in m:
         #i = ord(char) # Get the integer value of the byte
-        messageBin += "{0:08b}".format(int(char)) # returns the string representation for the binary of the byte held by message
+        binRepresentation = "{0:08b}".format(int(char)) # returns the string representation for the binary of the byte held by message
+        messageBin += binRepresentation
+        print(binRepresentation + " ")
 
     # construct the binary representation of the header
     idBin = "{0:08b}".format(current_msg_id) # returns the string representation for the binary of the byte held by id
@@ -112,7 +114,7 @@ def send_message(m):
     #testMessage = "{0:08b}".format(78) + "{0:08b}".format(255) #+ "{0:08b}".format(77)+ "{0:08b}".format(77)
     #messageToSend = testMessage
    # print("{0:08b}".format(78))
-    print(messageToSend)
+    print("Sending message")
     start_message_pattern()
     for bit in messageToSend:
         if ( bit == '1' ):
@@ -169,7 +171,11 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == '__main__':
-    # register the signal handler
-    signal.signal(signal.SIGINT, signal_handler)
-    main()
-    clean_up()
+    try:
+        # register the signal handler
+        signal.signal(signal.SIGINT, signal_handler)
+        main()
+    except Exception as e:
+        print(e)
+    finally:
+        clean_up()
