@@ -30,7 +30,7 @@ def main():
 #based on parameters provided by the meassage header sent with the data
 def loop():
         while True:
-                message_id = none
+                message_id = None
                 while (Data.availabe() > 0):
                     byte = Data.read() 
 #This variable extracts the message id that is 8 bits. This determines wiether or not the loop continues to extract data. Once all
