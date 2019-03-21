@@ -16,9 +16,7 @@ ALLOWED_CHARS_IN_FILE_PATH = set(string.ascii_lowercase + string.ascii_uppercase
 # the host to listen on (blank for localhost)
 HOST = ''
 # the port to either listen on or connect to
-PORT = 8000
-
-listen_socket = None
+PORT = 12345
 
 send_socket = None
 
@@ -33,11 +31,19 @@ def main():
         sys.exit(2)
 
     for opt, arg in opts:
-        if (opt == '-c'):
+        if (opt == '-i'):
             HOST = arg
-            # connect(arg)
+
+    connect()
 
     curses.wrapper(input_loop)
+
+# Connects to the HOST and PORT
+def connect():
+    global send_socket, HOST, PORT
+    # establish a connection to the remote server
+    send_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    send_socket.connect((HOST, PORT))
 
 def input_loop(win):
     win.nodelay(False)
@@ -69,8 +75,7 @@ def input_loop(win):
                 file_path += key
             # else if the user presses the "Enter" key
             elif (key == '\n'):
-                # TODO read in the file with the given name
-                # TODO send the file over the TCP connection
+                send_file_to_rpi(file_path)
                 # exit file mode
                 file_mode = False
                 display_description(win)
@@ -87,7 +92,7 @@ def input_loop(win):
                 display_description(win)
             else:
                 win.addstr(key)
-                # TODO send the character over the TCP connection
+                send_to_rpi(key)
 
 def display_description(win):
     win.clear()
@@ -105,25 +110,17 @@ def display_file_instructions(win, path):
 def is_valid_file_path_char(key):
     return len(key) == 1 and set(key).issubset(ALLOWED_CHARS_IN_FILE_PATH)
 
-# Starts the chat loop which continuously waits for either
-# local input or remote ouptut from the given connection;
-#
-# @param {socket} conn the connection to send message to and
-#   receive messages from
-def send_to_rpi(conn, data):
-    conn.sendall(data)
+# Sends the given string to the RPI
+def send_to_rpi(data):
+    byte_representation = data.encode('utf-8')
+    send_socket.sendall(byte_representation)
 
-# Connects to the given host;
-#
-# @param {string} hostname the host to connect to
-def connect(hostname):
-    global send_socket, PORT
-    # establish a connection to the remote server
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    send_socket = sock
-    sock.connect( (hostname, PORT) )
+# Sends the file with the given path to the RPI
+def send_file_to_rpi(file_path):
+    with open(file_path, 'rb') as f:
+        send_socket.sendfile(f, 0)
 
-# Closes any sockets that were opened;
+# Closes the send_socket
 def clean_up():
     if (send_socket):
         send_socket.close()
@@ -132,7 +129,7 @@ def clean_up():
 def signal_handler(sig, frame):
     clean_up()
     print('\n\nHave a nice day!')
-    time.sleep(0.5)
+    time.sleep(0.1)
     sys.exit(0)
 
 
