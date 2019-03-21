@@ -30,6 +30,7 @@ def main():
 
 def loop():
 while true:
+        message_id = none
         while (Data.availabe() > 0):
             byte = Data.read() 
             message_id = byte
@@ -57,6 +58,8 @@ while true:
                         count++
                      else:
                         f.write(payload)
+#sends a data recieved message once all the data has moved from the raspberrypi to laptop2
+sent_socket.send(message_id)
 
         
 
