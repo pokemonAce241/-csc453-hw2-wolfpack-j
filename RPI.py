@@ -9,7 +9,7 @@ import select
 
 # the size of the messages to receive from Laptop1 (this also serves as the
 # size of file messages that we will send through the LED)
-CHUNK_SIZE = 16
+CHUNK_SIZE = 32
 
 # a blank string means 'localhost' for sockets
 LOCALHOST = ''
@@ -21,7 +21,9 @@ LAPTOP1_CONN_PORT = 12345
 LAPTOP2_CONN_PORT = 23456
 
 # the time in seconds that a bit should be sent within
-TIME_PER_BIT = .004
+TIME_PER_BIT = 0.060
+
+START_PATTERN_TIME = 0.55
 
 # the socket that Laptop1 will connect through
 listen_socket_1 = None
@@ -46,7 +48,7 @@ def main():
     listen()
 
     transmit_loop()
-
+ #   send_message("hello world")
 # Listens for a connection from Laptop1 and then a connection from Laptop2
 def listen():
     global LOCALHOST, LAPTOP1_CONN_PORT, LAPTOP2_CONN_PORT, listen_socket_1, listen_socket_2, data_socket, ack_socket
@@ -81,7 +83,7 @@ def transmit_loop():
             if (file_num == data_socket.fileno()):
                 chunk = data_socket.recv(CHUNK_SIZE)
                 while chunk:
-                    print(str(datetime.datetime.now()) + ' ' + chunk)
+                    print(str(datetime.datetime.now()) + ' ' + str(chunk))
                     send_message(chunk)
                     print(str(datetime.datetime.now()) + ' DONE')
                     chunk = data_socket.recv(CHUNK_SIZE)
@@ -94,18 +96,23 @@ def transmit_loop():
 
 # modulate the given message through the LED
 def send_message(m):
+    global current_msg_id
+#    m = "hello world".encode('utf-8')
     # construct the binary representation of the message
     messageBin = ''
     for char in m:
-        i = ord(m) # Get the integer value of the byte
-        messageBin += "{0:8b}".format(i) # returns the string representation for the binary of the byte held by message
+        #i = ord(char) # Get the integer value of the byte
+        messageBin += "{0:08b}".format(int(char)) # returns the string representation for the binary of the byte held by message
 
     # construct the binary representation of the header
-    idBin = "{0:8b}".format(current_msg_id) # returns the string representation for the binary of the byte held by id
+    idBin = "{0:08b}".format(current_msg_id) # returns the string representation for the binary of the byte held by id
 
     # concatenate everything together
     messageToSend = idBin + messageBin
-
+    #testMessage = "{0:08b}".format(78) + "{0:08b}".format(255) #+ "{0:08b}".format(77)+ "{0:08b}".format(77)
+    #messageToSend = testMessage
+   # print("{0:08b}".format(78))
+    print(messageToSend)
     start_message_pattern()
     for bit in messageToSend:
         if ( bit == '1' ):
@@ -121,24 +128,26 @@ def send_message(m):
 # modulates the start pattern (on, off, on, off)
 def start_message_pattern():
     GPIO.output(26, True)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, False)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, True)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, False)
-    time.sleep(TIME_PER_BIT / 2)
+    ## time.sleep(TIME_PER_BIT / 2)
+    ## GPIO.output(26, False)
+    ## time.sleep(TIME_PER_BIT / 2)
+    ## GPIO.output(26, True)
+    ## time.sleep(TIME_PER_BIT / 2)
+    ## GPIO.output(26, False)
+    ## time.sleep(TIME_PER_BIT / 2)
+    time.sleep(START_PATTERN_TIME)
 
 # modulates the end pattern (off, on, off, on)
 def end_message_pattern():
     GPIO.output(26, False)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, True)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, False)
-    time.sleep(TIME_PER_BIT / 2)
-    GPIO.output(26, True)
-    time.sleep(TIME_PER_BIT / 2)
+    ##time.sleep(TIME_PER_BIT / 2)
+    ##GPIO.output(26, True)
+    ##time.sleep(TIME_PER_BIT / 2)
+    ##GPIO.output(26, False)
+    ##time.sleep(TIME_PER_BIT / 2)
+    ##GPIO.output(26, True)
+    ##time.sleep(TIME_PER_BIT / 2)
+    time.sleep(START_PATTERN_TIME)
 
 # Cleans up the GPIO pins and closes all sockets
 def clean_up():
