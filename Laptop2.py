@@ -1,33 +1,32 @@
 import serial
 import socket
 import time
-
+#This creates a serial connection with the Arduino
 Data = serial.Serial('/dev/ttyACM0',9600)   
 
 host = ''
 port = 23456
 send_socket = None
 
-char_mode = True
-file_mode = False
-
+#these create the files recieves from laptop one. The count vaiable is used to allow for multiple files to be created before shutdown
 count = 0
 filename = count + "result.txt"
 f = open(filename,'w')
 
         
 
-#These masks are meant to extract the needed bits from the message sent from the arduino
+#These masks are meant to extract the needed bits from the message sent from the arduino to recieve the needed parameters for 
+#displaying the output
 int type_mask = int("10000000",2)
 int file_end_mask = int("01000000",2)
 int message_size_mask = int("00011111",2)
 
 
-
+#This is the main function that runs the entire program
 def main():
         connect()
         loop()
-
+#
 def loop():
 while true:
         message_id = none
