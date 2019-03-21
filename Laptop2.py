@@ -29,7 +29,7 @@ def main():
 #This is the main loop of the program. This is resposible for recieving the data from the arduino and producing the proper output
 #based on parameters provided by the meassage header sent with the data
 def loop():
-        while true:
+        while True:
                 message_id = none
                 while (Data.availabe() > 0):
                     byte = Data.read() 
