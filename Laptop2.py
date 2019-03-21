@@ -4,7 +4,7 @@ import time
 
 Data = serial.Serial('/dev/ttyACM0',9600)   
 
-host =
+host = ''
 port = 12345
 send_socket = None
 
