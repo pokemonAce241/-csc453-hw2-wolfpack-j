@@ -54,13 +54,16 @@ while true:
             end_file = bin(end_file)
             end_file = end_file<<1
             end_file = end_file>>7
-
+                
+#The final part is a 5 bit section that describes the msg size of the payload attached to the message. This allows the program to
+#properly extract the payload to send to output without risk of leaving any data out.
             message_size = spec&message_size_mask
 
             message_size = int(message_size,2)
             result_type = int(result_type, 2)
             end_flie = int(end_file,2)
-#Taking the message size, this loop goes through and either prints the payload or write it to a file depending on the output type.
+#Taking the message size, this loop goes through the payload and either prints the payload to the consol window 
+#or write the payload to a file depending on the output type.
             for x in message_size:
                 payload = Data.read()
                 if result_type == 0:
@@ -75,7 +78,8 @@ while true:
 #sends a data recieved message once all the data has moved from the raspberrypi to laptop2
 sent_socket.send(message_id)
 
-        
+#This is resposible for closing the tcp connection gracefully so that their are no error.
+ clean_up()       
 
 #This method establishes a tcp connection with the raspberrypi
 def connect():
