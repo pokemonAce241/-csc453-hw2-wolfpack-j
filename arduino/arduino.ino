@@ -5,9 +5,12 @@ int TIME_PER_PATTERN_PIECE = TIME_PER_BIT / 2;
 // the time that the Arduino should be reading in sensor values at (ms)
 int POLLING_RATE = TIME_PER_PATTERN_PIECE / 2;
 // the maximum size of any particular message is 34 bytes (2-byte header + 32-byte max payload)
-const int MAX_MSG_SIZE = 34;
+const int MAX_MSG_SIZE = 66;
 
-int START_PATTERN_TIME = 550;
+int START_PATTERN_TIME = 548;
+
+// the value that must be surpassed in order to consider the LED on
+int THRESHOLD = 660;
 
 bool inWaitMode = true;
 unsigned long previousMillis = 0; //
@@ -41,7 +44,7 @@ void loop()
 
   // read the input on analog pin 0
   int sensorValue = analogRead(A0);
-  LEDisOn = sensorValue > 600;
+  LEDisOn = sensorValue > THRESHOLD;
 //  Serial.println(sensorValue);
 //  Serial.print("time on: ");
 //  Serial.println(timeThatLEDHasBeenOn);
@@ -89,16 +92,22 @@ void receiveMessageOperations() {
     switchModes();
 
     // REMOVE THIS AND CHANGE THE SERIAL BACK TO .write
+//    Serial.write(message, curIdxInMessage);
+
+    // print each byte as a character
     message[curIdxInMessage] = 0;
     String blah = String((char *) message);
     Serial.println(blah);
 
+    // print each byte in binary
 //    Serial.println(curIdxInMessage);
 //    for (int i = 0; i < curIdxInMessage; i++) {
 //      Serial.print(message[i], BIN);
 //      Serial.print(" ");
 //    }
 //    Serial.println();
+
+    // reset indices
     curIdxInMessage = 0;
     curBitInByte = 0;
   }
