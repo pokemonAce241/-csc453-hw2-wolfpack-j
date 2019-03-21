@@ -8,21 +8,50 @@ host = ''
 port = 12345
 send_socket = None
 
+char_mode = True
+file_mode = False
+
 count = 0
 
 f = open('result.txt','w')
 
         
-char byte
+
+
+int type_mask = int("10000000",2)
+int file_end_mask = int("01000000",2)
+int message_size_mask = int("00011111",2)
 
 
 clear_file()
 while (Data.availabe() > 0):
-    byte = Data.read()
-    write_to_file(byte)
-    Data.print(byte)
+    byte = Data.read() 
+    message_id = byte
     
-print(data)
+    specification = Data.read()
+    result_type = specification&type_mask
+    result_type = result_type>>7
+        
+    end_file = specification&file_end_mask
+    end_file = end_file<<1
+    end_file = end_file>>7
+
+    message_size = specification&message_size_mask
+    
+    message_size = (int)message_size
+    result_type = (int)result_type
+    
+    for x in message_size:
+        payload = Data.read()
+        if result_type == 0:
+             Data.print(payload)   
+        else:
+             if: (int)end_file == 1
+                f.close()
+             else:
+                f.write(payload)
+                
+        
 
 def send_file_to_rpi(file_path):
     with open(file_path, 'w') as f:
