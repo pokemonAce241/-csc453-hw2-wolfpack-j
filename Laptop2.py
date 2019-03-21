@@ -8,6 +8,8 @@ host = ''
 port = 12345
 send_socket = None
 
+count = 0
+
 f = open('result.txt','w')
 
         
