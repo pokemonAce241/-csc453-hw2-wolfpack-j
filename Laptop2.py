@@ -36,10 +36,14 @@ while true:
             message_id = byte
 #The following functions extract the message, output type,message size, and end of file information that is needed.
             specification = Data.read()
-            result_type = specification&type_mask
+            spec = int(specification,2)
+                
+            result_type = spec&type_mask
+            result_type = bin(result_type)
             result_type = result_type>>7
 
-            end_file = specification&file_end_mask
+            end_file = spec&file_end_mask
+            end_file = bin(end_file)
             end_file = end_file<<1
             end_file = end_file>>7
 
