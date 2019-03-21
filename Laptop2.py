@@ -5,7 +5,7 @@ import time
 Data = serial.Serial('/dev/ttyACM0',9600)   
 
 host = ''
-port = 12345
+port = 23456
 send_socket = None
 
 char_mode = True
@@ -24,33 +24,39 @@ int message_size_mask = int("00011111",2)
 
 
 clear_file()
-while (Data.availabe() > 0):
-    byte = Data.read() 
-    message_id = byte
-    
-    specification = Data.read()
-    result_type = specification&type_mask
-    result_type = result_type>>7
-        
-    end_file = specification&file_end_mask
-    end_file = end_file<<1
-    end_file = end_file>>7
 
-    message_size = specification&message_size_mask
-    
-    message_size = (int)message_size
-    result_type = (int)result_type
-    
-    for x in message_size:
-        payload = Data.read()
-        if result_type == 0:
-             Data.print(payload)   
-        else:
-             if: (int)end_file == 1
-                f.close()
-             else:
-                f.write(payload)
-                
+def main():
+        connect()
+        loop()
+
+def loop():
+        while (Data.availabe() > 0):
+            byte = Data.read() 
+            message_id = byte
+
+            specification = Data.read()
+            result_type = specification&type_mask
+            result_type = result_type>>7
+
+            end_file = specification&file_end_mask
+            end_file = end_file<<1
+            end_file = end_file>>7
+
+            message_size = specification&message_size_mask
+
+            message_size = (int)message_size
+            result_type = (int)result_type
+
+            for x in message_size:
+                payload = Data.read()
+                if result_type == 0:
+                     Data.print(payload)   
+                else:
+                     if: (int)end_file == 1
+                        f.close()
+                     else:
+                        f.write(payload)
+
         
 
 def send_file_to_rpi(file_path):
