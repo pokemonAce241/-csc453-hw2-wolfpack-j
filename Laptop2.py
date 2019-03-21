@@ -66,7 +66,7 @@ def loop():
                         else:
                              if: end_file == 1
                                 f.close()
-                                count++
+                                count+1
                                 f = open(filename,'w')
                              else:
                                 f.write(payload)
