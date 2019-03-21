@@ -13,7 +13,7 @@ file_mode = False
 
 count = 0
 filename = count + "result.txt"
-f = open('result.txt','w')
+f = open(filename,'w')
 
         
 
@@ -47,19 +47,21 @@ while true:
             end_file = end_file<<1
             end_file = end_file>>7
 
-            message_size = specification&message_size_mask
+            message_size = spec&message_size_mask
 
-            message_size = (int)message_size
-            result_type = (int)result_type
+            message_size = int(message_size,2)
+            result_type = int(result_type, 2)
+            end_flie = int(end_file,2)
 #Taking the message size, this loop goes through and either prints the payload or write it to a file depending on the output type.
             for x in message_size:
                 payload = Data.read()
                 if result_type == 0:
                      Data.print(payload)   
                 else:
-                     if: (int)end_file == 1
+                     if: end_file == 1
                         f.close()
                         count++
+                        f = open(filename,'w')
                      else:
                         f.write(payload)
 #sends a data recieved message once all the data has moved from the raspberrypi to laptop2
