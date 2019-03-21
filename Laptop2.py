@@ -35,7 +35,7 @@ def loop():
                     byte = Data.read() 
 #This variable extracts the message id that is 8 bits. This determines wiether or not the loop continues to extract data. Once all
 #data is sent the message_id should be a recieved message which is send to the socket after the while loop is over.
-                message_id = byte
+                    message_id = byte
 #The following procedures extract the message, output type,message size, and end of file information that is needed.
 
 #The specification extracts the next part of the message header after the messageid.
