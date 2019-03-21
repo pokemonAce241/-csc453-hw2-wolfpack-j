@@ -12,28 +12,28 @@ char_mode = True
 file_mode = False
 
 count = 0
-
+filename = count + "result.txt"
 f = open('result.txt','w')
 
         
 
-
+#These masks are meant to extract the needed bits from the message sent from the arduino
 int type_mask = int("10000000",2)
 int file_end_mask = int("01000000",2)
 int message_size_mask = int("00011111",2)
 
 
-clear_file()
 
 def main():
         connect()
         loop()
 
 def loop():
+while true:
         while (Data.availabe() > 0):
             byte = Data.read() 
             message_id = byte
-
+#The following functions extract the message, output type,message size, and end of file information that is needed.
             specification = Data.read()
             result_type = specification&type_mask
             result_type = result_type>>7
@@ -46,7 +46,7 @@ def loop():
 
             message_size = (int)message_size
             result_type = (int)result_type
-
+#Taking the message size, this loop goes through and either prints the payload or write it to a file depending on the output type.
             for x in message_size:
                 payload = Data.read()
                 if result_type == 0:
@@ -54,16 +54,13 @@ def loop():
                 else:
                      if: (int)end_file == 1
                         f.close()
+                        count++
                      else:
                         f.write(payload)
 
         
 
-def send_file_to_rpi(file_path):
-    with open(file_path, 'w') as f:
-        send_socket.sendfile(f, 0)
-
-
+#This method establishes a tcp connection with the raspberrypi
 def connect():
     global send_socket, HOST, PORT
     # establish a connection to the remote server
@@ -75,9 +72,5 @@ def clean_up():
     if (send_socket):
         send_socket.close()  
 
-def write_to_file(byteChar)
-        f.write(byteChar)
-        
-def clear_file()
-      f.seek(0)
-      f.truncate()
+       
+
